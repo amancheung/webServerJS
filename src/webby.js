@@ -1,18 +1,18 @@
 // webby.js
 const net = require('net');
 const path = require('path');
+const fs = require('fs');
 
-const webFrameWork = {
 
   //Object that maps status code to response
-  HTTP_STATUS_CODES: {
+  HTTP_STATUS_CODES= {
     200: "OK",
     404: "Not Found",
     500: "Internal Server Error"
   },
 
   //Object that maps file extension to file type
-  MIME_TYPES: {
+  MIME_TYPES= {
     "jpg": "image/jpeg",
     "jpeg": "image/jpeg",
     "png": "image/png",
@@ -22,7 +22,7 @@ const webFrameWork = {
   },
 
   //Function that retrieve file extension from file name
-  getExtension: function(fileName){
+  getExtension= function(fileName){
     fileExtension = fileName.split(".");
     if (fileExtension.length>1){
       return fileExtension[fileExtension.length-1];
@@ -32,7 +32,7 @@ const webFrameWork = {
   },
 
   //Function that returns file type of file extension (if extension if valid)
-  getMIMEType: function(fileName){
+  getMIMEType= function(fileName){
     fileExtension = getExtension(fileName);
     if (fileExtension!=''){
       return MIME_TYPES[getExtension(fileName)];
@@ -42,7 +42,7 @@ const webFrameWork = {
   },
 
   //Class that parses out method and path from http request
-  Request: class{
+  Request= class{
     constructor(httpRequest){
       const [method, path, ...elseInfo] = httpRequest.split(" ");
       this.method = method;
@@ -57,7 +57,7 @@ const webFrameWork = {
     4. Or determine what to do with incoming request path
     5. Send back valid http response
   */
-  App: class{
+  App= class{
     //Creates and initializes application
     constructor (){
       this.server = net.createServer(sock => this.handleConnection(sock));
@@ -98,17 +98,19 @@ const webFrameWork = {
 
     //Function that handles connection
     handleConnection(sock) {
-      const singleHandleRequest = this.handleRequest.bind(sock, null);
-      sock.on("data", binaryData => singleHandleRequest(binaryData));
+      const singleParaReq = this.handleRequest.bind(this, sock);
+      sock.on("data", binaryData => singleParaReq(binaryData));
     };
 
     //Function that handles request
     handleRequest(sock, binaryData){
       const s = binaryData+"";
-      const req = new webFrameWork.Request(s);
-      const res = new webFrameWork.Response(sock);
+      const req = new Request(s);
+      const res = new Response(sock);
+      const nextFn = this.processRoutes;
+      const trueNextFn = nextFn.bind(req, res);
       if (this.middleware!==null){
-        this.middleware(req, res, this.processRoutes.bind(this, req, res));
+        this.middleware(req, res, trueNextFn);
       } else {
         this.processRoutes(req, res);
       }
@@ -129,7 +131,7 @@ const webFrameWork = {
   },
 
   //Response class
-  Response: class {
+  Response= class {
     constructor(socket, statusCode, version) {
       this.sock = socket;
       this.headers = {};
@@ -186,6 +188,35 @@ const webFrameWork = {
 
   },
 
-};
+  //A middleware function that serves the file if it exists
+  serveStatic= function(basePath){
+     const f = function(req, res, next) {
+                    const fn = path.join(basePath, req.path);
+                    const contentType = this.getMIMEType(req.path);
+                    res.set('Content-Type', contentType);
+                    fs.readFile(fn, (err, data) => {
+                      if (err) {
+                        next.bind(req, res);
+                      } else {
+                        res.send(data);
+                      }
+                    });
+    };
+    return f;
+  },
 
-module.exports = webFrameWork;
+//};
+
+//module.exports = webFrameWork;
+
+module.exports = {
+  HTTP_STATUS_CODES: HTTP_STATUS_CODES,
+  MIME_TYPES: MIME_TYPES,
+  getFileExtension: getExtension,
+  getMIMEType: getMIMEType,
+  Request: Request,
+  App: App,
+  Response: Response,
+  static: serveStatic,
+}
+//module.exports webFrameWork.serveStatic as static;
