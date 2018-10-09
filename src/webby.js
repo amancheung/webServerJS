@@ -107,7 +107,7 @@ App= class{
     const req = new Request(s);
     const res = new Response(sock);
     if (this.middleware!==null){
-      this.middleware(req, res, this.processRoutes(req,res));
+      this.middleware(req, res, (req, res) => this.processRoutes(req,res));
     } else {
       this.processRoutes(req, res);
     }
