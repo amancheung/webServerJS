@@ -29,7 +29,7 @@ app.get('/', function(req, res) {
 app.get('/gallery', function(req, res) {
   console.log(req.method, req.path);
   let randomPicsName = [];
-  let randNumber = Math.floor(Math.random() * Math.floor(3))+2;
+  let randNumber = Math.floor(Math.random() * Math.floor(4))+1;
   if (randNumber<1){
     randNumber =1;
   }
