@@ -1,4 +1,39 @@
+body {
+  background-color: cyan;
+}
+
+h2 {
+ text-align: center;
+ font-family: futura;
+ color: #ff7f51;
+}
+
+h3 {
+  text-align: center;
+  font-family: futura;
+  color: #ff7f51;
+}
+
+a {
+  font-family: futura;
+  font-size: 20px;
+  background-image: linear-gradient(to right, rgba(255, 127, 81, 0) 50%, #ff7f51 50%);
+  background-position: -0% 0;
+  background-size: 200% auto;
+  color: #ff7f51;
+  text-decoration: none;
+  transition: background-position 0.5s ease-out;
+}
+a:hover {
+  color: cyan;
+  background-position: -99.99% 0;
+}
+
 p {
-    border-style: solid;
-    border-left-color: #ff0000;
+  text-align: center;
+}
+
+img {
+  width: 200px;
+  border: 1px solid yellow;
 }

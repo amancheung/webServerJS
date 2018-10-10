@@ -23,7 +23,7 @@ app.use(webby.static(path.join(__dirname, '..', 'public')));
 //Homepage -> return html
 app.get('/', function(req, res) {
   console.log(req.method, req.path);
-  res.send('<html><center><h2 style= "font-family:futura">Lemur Gallery</h2><a href="/gallery">Click for Lemur(s)</a></center></html>');
+  res.send('<html><head><link href="/css/styles.css" rel="stylesheet"></head><body><h2>Lemur Gallery</h2><p><a href="/gallery">Click for Lemur(s)</a></p></body></html>');
 });
 
 app.get('/gallery', function(req, res) {
@@ -40,11 +40,11 @@ app.get('/gallery', function(req, res) {
   }
   console.log("Files used: "+randomPicsName);
   //Incorporate random file names to page
-  let retString = `<html><center><h3 style= "font-family:futura">Random Images of ${randNumber} Lemur(s)</h3>`
+  let retString = `<html><head><link href="/css/styles.css" rel="stylesheet"></head><body><h3>Random Images of ${randNumber} Lemur(s)</h3><p>`
   for (let i=0; i<randomPicsName.length; i++){
-    retString += `<img src=\"img/${randomPicsName[i]}\" width="200">`;
+    retString += `<img src=\"img/${randomPicsName[i]}\">`;
   }
-  retString += `</center></html>`;
+  retString += `</p></body></html>`;
   res.send(retString);
 });
 
