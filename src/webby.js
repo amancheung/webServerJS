@@ -201,10 +201,8 @@ serveStatic= function(basePath){
                   fs.readFile(fn, (err, data) => {
                     if (err) {
                       next(req, res);
-                      //res.end();
                     } else {
                       res.send(data);
-                      //res.end();
                     }
                   });
   };
