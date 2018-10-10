@@ -52,7 +52,7 @@ app.get('/gallery', function(req, res) {
 app.get('/pics', function(req, res) {
   const key = app.createRouteKey(req.method, '/gallery');
   console.log("Redirect: "+key);
-  app.routes[key](req, res.status(300));
+  app.routes[key](req, res.status(308));
 });
 
 

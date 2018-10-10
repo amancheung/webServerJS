@@ -9,7 +9,7 @@ const fs = require('fs');
 //Object that maps status code to response
 HTTP_STATUS_CODES= {
   200: "OK",
-  300: "Permanent Redirect",
+  308: "Permanent Redirect",
   404: "Not Found",
   500: "Internal Server Error"
 },
