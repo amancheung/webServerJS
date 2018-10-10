@@ -7,6 +7,7 @@ const fs = require('fs');
 //Object that maps status code to response
 HTTP_STATUS_CODES= {
   200: "OK",
+  300: "Permanent Redirect",
   404: "Not Found",
   500: "Internal Server Error"
 },
@@ -86,6 +87,12 @@ App= class{
     this.routes[key] = cb;
   };
 
+  /*
+  redirect(newURL) {
+    const key = this.createRouteKey("get", newURL);
+    this.get(newURL, this.routes[newURL]);
+  }; */
+
   //Function that sets middleware to app
   use (cb) {
     this.middleware = cb;
@@ -107,7 +114,7 @@ App= class{
     const req = new Request(s);
     const res = new Response(sock);
     if (this.middleware!==null){
-      this.middleware(req, res, (req, res) => this.processRoutes(req,res));
+      this.middleware(req, res, () => {this.processRoutes(req,res)});
     } else {
       this.processRoutes(req, res);
     }
@@ -119,8 +126,7 @@ App= class{
     if (this.routes[key]!==undefined){
       this.routes[key](req, res);
     } else {
-      res.status(404);
-      res.send("Page not found\n");
+      res.status(404).send("Page not found\n");
     }
   };
 
@@ -147,7 +153,7 @@ Response = class {
 
   //Function that ends connection with Server
   end() {
-    this.sock.end("Connection has ended!");
+    this.sock.end("Powered by Webby!");
   };
 
   //Function that outputs status
@@ -168,7 +174,6 @@ Response = class {
 
   //Function that sets body of response obj
   send(body) {
-    this.response = body;
     this.sock.write(this.statusLineToString());
     this.sock.write(this.headersToString());
     this.sock.write("\r\n");
@@ -186,25 +191,24 @@ Response = class {
 
 //A middleware function that serves the file if it exists
 serveStatic= function(basePath){
-   const f = function(req, res, next) {
+   return function(req, res, next) {
                   const fn = path.join(basePath, req.path);
-                  const contentType = this.getMIMEType(req.path);
+                  const contentType = getMIMEType(req.path);
+                  console.log(req.method, req.path);
                   res.set('Content-Type', contentType);
                   fs.readFile(fn, (err, data) => {
                     if (err) {
-                      next.bind(req, res);
+                      next(req, res);
+                      //res.end();
                     } else {
                       res.send(data);
+                      //res.end();
                     }
                   });
   };
-  return f;
 },
 
-//};
-
-//module.exports = webFrameWork;
-
+//Exporting modules
 module.exports = {
   HTTP_STATUS_CODES: HTTP_STATUS_CODES,
   MIME_TYPES: MIME_TYPES,
@@ -215,4 +219,3 @@ module.exports = {
   Response: Response,
   static: serveStatic,
 }
-//module.exports webFrameWork.serveStatic as static;
