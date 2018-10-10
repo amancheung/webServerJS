@@ -50,9 +50,10 @@ app.get('/gallery', function(req, res) {
 
 //Redirect to /gallery
 app.get('/pics', function(req, res) {
-  const key = app.createRouteKey(req.method, '/gallery');
-  console.log("Redirect: "+key);
-  app.routes[key](req, res.status(308));
+  //ammend path and pass it to processRoutes
+  req.path = '/gallery';
+  console.log("Redirected to /gallery");
+  app.processRoutes(req, res.status(308));
 });
 
 
