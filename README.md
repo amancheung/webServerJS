@@ -1,5 +1,5 @@
-# amancheung-homework03
-AIT Homework 03 - Lap Yan Cheung (lyc286)
+# WEBServer with .net module
+A server that serves up html files, created with the .net module and emulates express JS
 
 Start by typing node src/app.js in command line
 
